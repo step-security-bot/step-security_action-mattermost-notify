@@ -1,6 +1,6 @@
 import * as core from '@actions/core'
 import { HttpClient } from '@actions/http-client'
-import { join } from 'path'
+import * as path from 'path'
 import * as fs from 'fs'
 import axios, { isAxiosError } from 'axios'
 
@@ -77,7 +77,13 @@ function loadConfiguration(): ActionConfig {
 async function loadPayloadFile(
   filename: string
 ): Promise<WebhookPayload | undefined> {
-  const filePath = join(__dirname, '..', filename)
+  const workspace = path.resolve(__dirname, '..')
+  const filePath = path.resolve(workspace, filename)
+
+  if (!filePath.startsWith(workspace + path.sep)) {
+    throw new Error(`PAYLOAD_FILENAME must be a path within the workspace, got: ${filename}`)
+  }
+
   try {
     await fs.promises.access(filePath, fs.constants.F_OK)
     const legacyData = await fs.promises.readFile(filePath)

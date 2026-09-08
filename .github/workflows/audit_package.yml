@@ -26,7 +26,6 @@ jobs:
       force: ${{ inputs.force || false }}
       base_branch: ${{ inputs.base_branch || 'main' }}
       node_version: ${{ inputs.node_version || '24' }}
-      script: ${{ inputs.script || 'npm run bundle' }}
 
 permissions:
   contents: write

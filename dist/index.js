@@ -36751,7 +36751,7 @@ exports.buildTextPayload = buildTextPayload;
 exports.resolveMessage = resolveMessage;
 const core = __importStar(__nccwpck_require__(7484));
 const http_client_1 = __nccwpck_require__(4844);
-const path_1 = __nccwpck_require__(6928);
+const path = __importStar(__nccwpck_require__(6928));
 const fs = __importStar(__nccwpck_require__(9896));
 const axios_1 = __importStar(__nccwpck_require__(7269));
 async function validateSubscription() {
@@ -36801,7 +36801,11 @@ function loadConfiguration() {
     };
 }
 async function loadPayloadFile(filename) {
-    const filePath = (0, path_1.join)(__dirname, '..', filename);
+    const workspace = path.resolve(__dirname, '..');
+    const filePath = path.resolve(workspace, filename);
+    if (!filePath.startsWith(workspace + path.sep)) {
+        throw new Error(`PAYLOAD_FILENAME must be a path within the workspace, got: ${filename}`);
+    }
     try {
         await fs.promises.access(filePath, fs.constants.F_OK);
         const legacyData = await fs.promises.readFile(filePath);
