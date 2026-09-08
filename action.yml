@@ -1,0 +1,61 @@
+name: 'action-mattermost-notify'
+description: >
+  Delivers messages and pipeline status updates to Mattermost channels via
+  incoming webhooks. Supports plain text, Markdown, and fully custom JSON
+  payloads. Ideal for notifying teams about CI results, deployments, and
+  security events directly in Mattermost.
+author: 'step-security'
+branding:
+  icon: 'bell'
+  color: 'green'
+
+inputs:
+  MATTERMOST_WEBHOOK_URL:
+    description: >
+      The full HTTPS URL of the incoming webhook configured in your Mattermost
+      instance. This determines which team and channel receives the message by
+      default. Required.
+    required: true
+  MATTERMOST_CHANNEL:
+    description: >
+      The name or ID of the Mattermost channel to post to (e.g. town-square or
+      @username for direct messages). When provided, overrides the default
+      channel configured on the webhook itself.
+    required: false
+  MATTERMOST_USERNAME:
+    description: >
+      The display name shown as the author of the message in Mattermost.
+      Overrides the default bot name set on the incoming webhook integration.
+    required: false
+  MATTERMOST_ICON_URL:
+    description: >
+      Publicly accessible URL of an image (PNG or JPG) to use as the bot
+      avatar next to the message. Overrides the default icon configured on
+      the webhook.
+    required: false
+  TEXT:
+    description: >
+      The message body to send. Supports Mattermost Markdown syntax including
+      bold, italics, links, and emoji (e.g. :white_check_mark:). Use this for
+      simple notifications. Mutually exclusive with PAYLOAD.
+    required: false
+  PAYLOAD:
+    description: >
+      A raw JSON string conforming to the Mattermost incoming webhook schema.
+      Use this for advanced messages with attachments, custom fields, or
+      structured formatting. When provided, TEXT is ignored.
+    required: false
+  PAYLOAD_FILENAME:
+    description: >
+      Path (relative to the repository root) of a local JSON file to read and
+      forward to the webhook. Useful for pre-built payloads checked into the
+      repo. Supersedes both TEXT and PAYLOAD when the file exists.
+    required: false
+    default: mattermost.json
+    deprecationMessage: >
+      PAYLOAD_FILENAME is deprecated and will be removed in a future release.
+      Use TEXT or PAYLOAD instead.
+
+runs:
+  using: node24
+  main: dist/index.js
